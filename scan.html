@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Scanner QR – Mariage Alexis & July</title>
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<style>
+  body { font-family: Arial; padding: 20px; background:#fafafa; }
+  .card { background:#fff; padding:20px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
+  h2 { color:#444; }
+  .result { margin-top:20px; font-size:18px; }
+</style>
+</head>
+<body>
+
+<h2>📱 Scanner QR – Mariage Alexis & July</h2>
+
+<div id="reader" class="card" style="width:320px;"></div>
+
+<div id="result" class="result"></div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbxnPRc6xJ1cme6EoVM55iAq_4Y_Vo6OaLplNvgtvbg2mnCEOYkVM4EPej_lHGD_lAH-/exec";
+
+function onScanSuccess(decodedText) {
+  fetch(API_URL + "?id=" + encodeURIComponent(decodedText))
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        document.getElementById("result").innerHTML = "<b style='color:red;'>QR non reconnu</b>";
+      } else {
+        document.getElementById("result").innerHTML =
+          "<div class='card'>" +
+          "<h3>Invité : " + data.name + "</h3>" +
+          "<p><b>Table :</b> " + data.tableNumber + "</p>" +
+          "<p><b>Nom de la Table :</b> " + data.tableName + "</p>" +
+          "</div>";
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById("result").innerHTML = "<b style='color:red;'>Erreur de communication avec le serveur</b>";
+    });
+}
+
+// Initialisation du scanner
+var html5QrcodeScanner = new Html5QrcodeScanner(
+  "reader", { fps: 10, qrbox: 250 });
+html5QrcodeScanner.render(onScanSuccess);
+</script>
+
+</body>
+</html>
