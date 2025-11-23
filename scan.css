@@ -62,3 +62,19 @@ h2 {
   color: #b05d82;
   margin-bottom: 10px;
 }
+
+.switch-camera {
+  margin-top: 15px;
+  background: #b05d82;
+  color: #fff;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.switch-camera:hover {
+  background: #8d4b69;
+}
+

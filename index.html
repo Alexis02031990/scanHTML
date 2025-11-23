@@ -4,55 +4,80 @@
 <meta charset="UTF-8">
 <title>Scanner QR – Mariage Alexis & July</title>
 
-<!-- Scanner QR -->
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-
-<!-- Style externe -->
 <link rel="stylesheet" href="style.css">
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
-<!-- BANNIÈRE (mets ta photo dans style.css) -->
 <div class="banner"></div>
 
 <h2>Scanner QR – Mariage Alexis & July</h2>
 <p class="subtitle">Accès protocole – Vérification de l'invité</p>
 
+<!-- Scanner -->
 <div class="scanner-card">
-  <div id="reader" style="width:300px; margin:auto;"></div>
+    <div id="reader" style="width:100%; max-width:350px; margin:auto;"></div>
+    <button id="switch-camera" class="switch-camera">🔄 Changer de caméra</button>
 </div>
 
 <div id="result"></div>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbxnPRc6xJ1cme6EoVM55iAq_4Y_Vo6OaLplNvgtvbg2mnCEOYkVM4EPej_lHGD_lAH-/exec";
+let currentCamera = null;
+let cameras = [];
 
-function onScanSuccess(decodedText) {
-  fetch(API_URL + "?id=" + encodeURIComponent(decodedText))
-    .then(res => res.json())
-    .then(data => {
-      if (data.error) {
-        document.getElementById("result").innerHTML =
-          "<div class='card error'>QR non reconnu ❌</div>";
-      } else {
-        document.getElementById("result").innerHTML =
-          "<div class='card'>" +
-          "<h3>Invité : " + data.name + "</h3>" +
-          "<p><b>Numéro de Table :</b> " + data.tableNumber + "</p>" +
-          "<p><b>Nom de la Table :</b> " + data.tableName + "</p>" +
-          "</div>";
-      }
-    })
-    .catch(err => {
-      document.getElementById("result").innerHTML =
-        "<div class='card error'>Erreur de communication ⚠️</div>";
-    });
+function startScanner(cameraId) {
+    const html5QrCode = new Html5Qrcode("reader");
+
+    html5QrCode.start(
+        cameraId,
+        { fps: 15, qrbox: { width: 250, height: 250 } },
+        decodedText => handleScan(decodedText)
+    ).catch(err => console.error("Erreur scanner:", err));
+
+    document.getElementById("switch-camera").onclick = () => {
+        if (cameras.length > 1) {
+            html5QrCode.stop().then(() => {
+                currentCamera = cameras[(cameras.indexOf(currentCamera) + 1) % cameras.length].id;
+                startScanner(currentCamera);
+            });
+        }
+    };
 }
 
-var html5QrcodeScanner = new Html5QrcodeScanner(
-  "reader", { fps: 10, qrbox: 250 });
-html5QrcodeScanner.render(onScanSuccess);
+function handleScan(decodedText) {
+    fetch(API_URL + "?id=" + encodeURIComponent(decodedText))
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) {
+                document.getElementById("result").innerHTML =
+                    "<div class='card error'>QR non reconnu ❌</div>";
+            } else {
+                document.getElementById("result").innerHTML =
+                    "<div class='card'>" +
+                    "<h3>Invité : " + data.name + "</h3>" +
+                    "<p><b>Numéro de Table :</b> " + data.tableNumber + "</p>" +
+                    "<p><b>Nom de la Table :</b> " + data.tableName + "</p>" +
+                    "</div>";
+            }
+        })
+        .catch(() => {
+            document.getElementById("result").innerHTML =
+                "<div class='card error'>Erreur connexion ⚠️</div>";
+        });
+}
+
+// 📱 Détection automatique des caméras du téléphone
+Html5Qrcode.getCameras().then(devices => {
+    cameras = devices;
+    if (devices.length > 0) {
+        currentCamera = devices[devices.length - 1].id; // Priorité caméra arrière
+        startScanner(currentCamera);
+    }
+});
 </script>
 
 </body>
