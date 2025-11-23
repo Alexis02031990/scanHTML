@@ -6,17 +6,22 @@ body {
   text-align: center;
 }
 
-/* 🌸 Bannière romantique */
+
+/* 🌸 Bannière en bas au centre */
 .banner {
-  width: 100%;
-  height: 230px;
-  background-image: url("banner.jpg"); /* À remplacer par votre photo */
+  width: 200px; /* Ajuste selon tes besoins */
+  height: 200px;
+  background-image: url("banner.jpg"); /* chemin relatif à index.html */
   background-size: cover;
   background-position: center;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 50%; /* pour un cercle */
+  position: fixed;
+  bottom: 20px; /* distance du bas */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
 }
+
 
 h2 {
   margin-top: 20px;
