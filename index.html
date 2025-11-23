@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Scanner QR – Mariage Alexis & July</title>
+<title>Scanner QR – Mariage July Clemence & Alexis</title>
 
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <link rel="stylesheet" href="style.css">
@@ -11,12 +11,10 @@
 </head>
 <body>
 
-<div class="banner"></div>
 
 <h2>Scanner QR – Mariage Alexis & July</h2>
 <p class="subtitle">Accès protocole – Vérification de l'invité</p>
 
-<!-- Scanner -->
 <div class="scanner-card">
     <div id="reader" style="width:100%; max-width:350px; margin:auto;"></div>
     <button id="switch-camera" class="switch-camera">🔄 Changer de caméra</button>
@@ -25,7 +23,7 @@
 <div id="result"></div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbxnPRc6xJ1cme6EoVM55iAq_4Y_Vo6OaLplNvgtvbg2mnCEOYkVM4EPej_lHGD_lAH-/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzJU5v1cU1xcNm2oRoq2rv-eyC-eWnJzpWW-TJzPofwGcKfZVzkiWW87cB-lGwbs8JbfQ/exec";
 let currentCamera = null;
 let cameras = [];
 
@@ -36,16 +34,7 @@ function startScanner(cameraId) {
         cameraId,
         { fps: 15, qrbox: { width: 250, height: 250 } },
         decodedText => handleScan(decodedText)
-    ).catch(err => console.error("Erreur scanner:", err));
-
-    document.getElementById("switch-camera").onclick = () => {
-        if (cameras.length > 1) {
-            html5QrCode.stop().then(() => {
-                currentCamera = cameras[(cameras.indexOf(currentCamera) + 1) % cameras.length].id;
-                startScanner(currentCamera);
-            });
-        }
-    };
+    );
 }
 
 function handleScan(decodedText) {
@@ -70,15 +59,16 @@ function handleScan(decodedText) {
         });
 }
 
-// 📱 Détection automatique des caméras du téléphone
 Html5Qrcode.getCameras().then(devices => {
     cameras = devices;
     if (devices.length > 0) {
-        currentCamera = devices[devices.length - 1].id; // Priorité caméra arrière
+        currentCamera = devices[devices.length - 1].id; 
         startScanner(currentCamera);
     }
 });
 </script>
+<!-- Image affichée directement -->
+<img src="banner.jpg" alt="Bannière Mariage" style="width:100%; height:auto; border-bottom-left-radius:20px; border-bottom-right-radius:20px;">
 
 </body>
 </html>
